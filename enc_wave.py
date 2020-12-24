@@ -10,7 +10,7 @@
 import sys, wave, numpy
 
 MAX = 32767
-DUR = 0.05
+DUR = 0.5
 RATE = 8000
 FREQS = [
     880.0, 2093.004, 987.7666, 1864.655,       # A5, C7, B5, A#6/Bb6
@@ -19,20 +19,18 @@ FREQS = [
     1760.0, 1046.5022, 1975.5332, 932.3276     # A6, C6, B6, A#5/Bb5
 ]
 
-def to_bits(byte):
-    a = ''.join('{0:08b}'.format(ord(chr(b)), 'b') for b in byte)
-    return a
-
 def input_data(input):
     with open(input, 'rb') as f:
-        r = numpy.empty(0, 'b')
+        r = []
         while True:
             byte = f.read(1)
             if not byte:
                 break
             else:
-                for b in to_bits(byte):
-                    r = numpy.append(r, 1 if int(byte) == 1 else -1)
+                l = ['{:02x}'.format(b) for b in byte]
+                for h in l:
+                    m = [int(d, 16) for d in h]
+                    r.extend(m)
     return r
 
 def sine_wave(rate, freq, dur):
@@ -44,10 +42,16 @@ def prepare_audio(input):
     r = input_data(input)
     s = numpy.empty(0, 'b')
     for i in r:
-        w = sine_wave(RATE, FREQS[int(i, 16)], DUR)
+        w = sine_wave(RATE, FREQS[i], DUR)
         s = numpy.append(s, w)
     s = numpy.int16(s)
     return s
+
+    # l = len(w)
+    # n = [str(b) for b in '{:04b}'.format(i)]
+    # for j in n:
+    # d = numpy.append(numpy.empty(0, 'b'), numpy.full(int(l / 4), (1 if int(j) == 1 else -1) * MAX))
+    # s = numpy.resize(s, int(RATE * len(r)))
 
 def output_audio(input, output):
     s = prepare_audio(input)
