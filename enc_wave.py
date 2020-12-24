@@ -13,10 +13,10 @@ MAX = 32767
 DUR = 0.5
 RATE = 8000
 FREQS = [
-    880.0, 2093.004, 987.7666, 1864.655,       # A5, C7, B5, A#6/Bb6
-    1108.7306, 1661.2188, 1244.508, 1479.9776, # C#6/Db6, G#6/Ab6, D#6/Eb6, F#6/Gb6
-    1396.913, 1318.5102, 1567.9818, 1174.659,  # F6, E6, G6, D6
-    1760.0, 1046.5022, 1975.5332, 932.3276     # A6, C6, B6, A#5/Bb5
+    440.0, 1046.502, 493.8833, 932.3275,
+    554.3653, 830.6094, 622.254, 739.9888,
+    698.4565, 659.2551, 783.9909, 587.3295,
+    880.0, 523.2511, 987.7666, 466.1638
 ]
 
 def input_data(input):
@@ -34,7 +34,7 @@ def input_data(input):
     return r
 
 def sine_wave(rate, freq, dur):
-    t = numpy.linspace(0, dur, int(dur * rate), False)
+    t = numpy.linspace(0, dur, int((dur / 2) * rate), False)
     w = numpy.int16(numpy.sin(2 * numpy.pi * freq * t) * MAX)
     return w
 
@@ -49,7 +49,7 @@ def prepare_audio(input):
             o = [int(d, 2) for d in c]
             s1 = numpy.append(s1, numpy.full(int(len(w) / 4), (1 if o[0] == 1 else -1) * MAX))
         s0 = numpy.append(s0, w)
-    s = numpy.array(list(zip(s0, s1))).flatten()
+    s = numpy.array(list(zip(s0, s1)))
     s = numpy.int16(s)
     return s
 
