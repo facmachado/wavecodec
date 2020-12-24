@@ -40,18 +40,18 @@ def sine_wave(rate, freq, dur):
 
 def prepare_audio(input):
     r = input_data(input)
-    s = numpy.empty(0, 'b')
+    s0 = numpy.empty(0, 'b')
+    s1 = numpy.empty(0, 'b')
     for i in r:
         w = sine_wave(RATE, FREQS[i], DUR)
-        s = numpy.append(s, w)
+        n = '{:04b}'.format(i)
+        for c in n:
+            o = [int(d, 2) for d in c]
+            s1 = numpy.append(s1, numpy.full(int(len(w) / 4), (1 if o[0] == 1 else -1) * MAX))
+        s0 = numpy.append(s0, w)
+    s = numpy.array(list(zip(s0, s1))).flatten()
     s = numpy.int16(s)
     return s
-
-    # l = len(w)
-    # n = [str(b) for b in '{:04b}'.format(i)]
-    # for j in n:
-    # d = numpy.append(numpy.empty(0, 'b'), numpy.full(int(l / 4), (1 if int(j) == 1 else -1) * MAX))
-    # s = numpy.resize(s, int(RATE * len(r)))
 
 def output_audio(input, output):
     s = prepare_audio(input)
