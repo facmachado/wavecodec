@@ -10,13 +10,13 @@
 import sys, wave, numpy
 
 MAX = 32767
-DUR = 0.5
+DUR = 0.05
 RATE = 8000
 FREQS = [
-    440.0, 1046.502, 493.8833, 932.3275,
-    554.3653, 830.6094, 622.254, 739.9888,
-    698.4565, 659.2551, 783.9909, 587.3295,
-    880.0, 523.2511, 987.7666, 466.1638
+    440.0, 1046.502, 493.8833, 932.3275,    # A4, C6, B4, A#5/Bb5
+    554.3653, 830.6094, 622.254, 739.9888,  # C#5/Db5, G#5/Ab5, D#5/Eb5, F#5/Gb5
+    698.4565, 659.2551, 783.9909, 587.3295, # F5, E5, G5, D5
+    880.0, 523.2511, 987.7666, 466.1638     # A5, C5, B5, A#4/Bb4
 ]
 
 def input_data(input):
@@ -34,7 +34,7 @@ def input_data(input):
     return r
 
 def sine_wave(rate, freq, dur):
-    t = numpy.linspace(0, dur, int((dur / 2) * rate), False)
+    t = numpy.linspace(0, dur, int(dur * rate), False)
     w = numpy.int16(numpy.sin(2 * numpy.pi * freq * t) * MAX)
     return w
 
@@ -56,7 +56,7 @@ def prepare_audio(input):
 def output_audio(input, output):
     s = prepare_audio(input)
     g = wave.open(output, 'wb')
-    g.setparams((1, 2, RATE, 0, 'NONE', 'not compressed'))
+    g.setparams((2, 2, RATE, 0, 'NONE', 'not compressed'))
     g.writeframes(s)
     g.close()
 
