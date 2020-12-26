@@ -11,7 +11,7 @@ import sys, wave, numpy
 
 MAX = 32767
 DUR = 0.05
-RATE = 128000
+RATE = 8000
 FREQS = [
     440.0, 1046.502, 493.8833, 932.3275,    # A4, C6, B4, A#5/Bb5
     554.3653, 830.6094, 622.254, 739.9888,  # C#5/Db5, G#5/Ab5, D#5/Eb5, F#5/Gb5
@@ -43,13 +43,12 @@ def prepare_audio(input):
     s0 = numpy.empty(0, 'b')
     s1 = numpy.empty(0, 'b')
     for i in r:
-        v = sine_wave(RATE, FREQS[i], DUR)
-        w = sine_wave(RATE, 640.7546, DUR / 4)
-        for c in '{:04b}'.format(i):
-            o = [int(d, 2) for d in c]
-            # s1 = numpy.append(s1, numpy.full(len(w), o[0] * MAX))
-            s1 = numpy.append(s1, w if o[0] == 1 else numpy.full(len(w), 0))
-        s0 = numpy.append(s0, v)
+        w0 = sine_wave(RATE, FREQS[i], DUR)
+        w1 = sine_wave(RATE, 640.7546, DUR / 4)
+        for j in '{:04b}'.format(i):
+            v = [int(d, 2) for d in j][0]
+            s1 = numpy.append(s1, w1 if v == 1 else numpy.full(len(w1), 0))
+        s0 = numpy.append(s0, w0)
     s = numpy.int16(numpy.array(list(zip(s0, s1))))
     return s
 
